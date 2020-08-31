@@ -1,0 +1,70 @@
+plugins {
+    id 'base'
+}
+
+dependencies {
+    project (":generator")
+    project (":dis")
+}
+
+task GenerateEnums(type: JavaExec, group: "codegen", dependsOn:[':generator:assemble']) {
+    classpath "${project(":generator").buildDir}/classes/java/main/" + \
+              ":${project(":generator").buildDir}/resources/main/"
+    main "edu.nps.moves.dis7.source.generator.enumerations.GenerateEnumerations"
+    args([
+            "generator/xml/SISO/SISO-REF-010.xml",
+            "${projectDir}/dis/src/main/java/edu/nps/moves/dis7/enumerations",
+            "edu.nps.moves.dis7.enumerations",
+    ])
+
+}
+
+task GeneratePdus(type: JavaExec, group: "codegen", dependsOn: "GenerateEnums") {
+    classpath "${project(":generator").buildDir}/classes/java/main/" + \
+              ":${project(":generator").buildDir}/resources/main/"
+    jvmArgs = ([
+            "-Dxmlpg.generatedSourceDir=dis/src/main/java",
+            "-Dxmlpg.package=edu.nps.moves.dis7"
+    ])
+    main "edu.nps.moves.dis7.source.generator.pdus.GeneratePdus"
+    args(["generator/xml/dis_7_2012/DIS_7_2012.xml", "java"])
+
+}
+
+task GenerateJammers(type: JavaExec, group: "codegen", dependsOn: "GeneratePdus") {
+    classpath "${project(":generator").buildDir}/classes/java/main/" + \
+              ":${project(":generator").buildDir}/resources/main/"
+    main "edu.nps.moves.dis7.source.generator.entitytypes.GenerateJammers"
+    args([
+            "generator/xml/SISO/SISO-REF-010.xml",
+            "dis/src/main/java/edu/nps/moves/dis7/jammers",
+            "edu.nps.moves.dis7.jammers"
+    ])
+
+}
+
+task GenerateObjectTypes(type: JavaExec, group: "codegen",dependsOn: "GenerateJammers") {
+    classpath "${project(":generator").buildDir}/classes/java/main/" + \
+              ":${project(":generator").buildDir}/resources/main/"
+    main "edu.nps.moves.dis7.source.generator.entitytypes.GenerateObjectTypes"
+    args([
+            "generator/xml/SISO/SISO-REF-010.xml",
+            "dis/src/main/java/edu/nps/moves/dis7/objecttypes",
+            "edu.nps.moves.dis7.objecttypes"
+    ])
+
+}
+
+task GenerateEntityTypes(type: JavaExec, group: "codegen", dependsOn: [":dis:assemble", "GenerateObjectTypes"]) {
+    classpath "${project(":generator").buildDir}/classes/java/main/" + \
+              ":${project(":generator").buildDir}/resources/main/" + \
+              ":${project(":dis").buildDir}/classes/java/main"
+    main "edu.nps.moves.dis7.source.generator.entitytypes.GenerateEntityTypes"
+    args([
+            "generator/xml/SISO/SISO-REF-010.xml",
+            "dis/src/main/java/edu/nps/moves/dis7/entities",
+            "edu.nps.moves.dis7.entities"
+    ])
+}
+
+task MakeDistribution(group:"Distribution", dependsOn: ["GenerateEntityTypes",":dis:assemble"])
