@@ -1,5 +1,6 @@
 plugins {
     id "java-library"
+    id "maven-publish"
 }
 
 java {
@@ -30,3 +31,19 @@ task cleanGenerated(type: Delete) {
 }
 
 clean.dependsOn('cleanGenerated')
+
+
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'edu.nps.moves'
+            artifactId = 'open-dis7-enumerations'
+            version = '1.0'
+
+            from components.java
+        }
+    }
+}
+
