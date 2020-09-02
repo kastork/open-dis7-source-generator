@@ -68,3 +68,5 @@ task GenerateEntityTypes(type: JavaExec, group: "codegen", dependsOn: [":dis:ass
 }
 
 task MakeDistribution(group:"Distribution", dependsOn: ["GenerateEntityTypes",":dis:assemble"])
+
+task Install(group:"Distribution", dependsOn: ["MakeDistribution",":dis:publishToMavenLocal"])
