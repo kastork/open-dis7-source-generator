@@ -9,4 +9,4 @@
 
 rootProject.name = 'open-dis7-enumeration-builder'
 include 'generator'
-include 'dis'
+include 'intermediate'

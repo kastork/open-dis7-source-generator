@@ -30,11 +30,6 @@ task cleanGenerated(type: Delete) {
     delete "src/main/java/edu"
 }
 
-clean.dependsOn('cleanGenerated')
-
-
-
-
 publishing {
     publications {
         maven(MavenPublication) {
