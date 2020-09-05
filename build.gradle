@@ -1,5 +1,5 @@
 plugins {
-    id "java"
+    id "java-library"
     id "maven-publish"
 }
 
@@ -8,11 +8,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-dependencies {
-    project(":generator")
-    project(":intermediate")
-}
-
+//dependencies {
+//    project(":generator")
+//    project(":intermediate")
+//}
 
 sourceSets {
     main {
@@ -25,8 +24,6 @@ sourceSets {
         }
     }
 }
-
-
 
 task GenerateEnums(type: JavaExec, group: "codegen", dependsOn: [':generator:assemble']) {
     doLast {
@@ -99,19 +96,11 @@ task GenerateEntityTypes(type: JavaExec, group: "codegen", dependsOn: ["Generate
     ])
 }
 
-
 task GenerateDIS(group: "codegen", dependsOn: ["GenerateEntityTypes"])
 
-//task Install(group: "Distribution", dependsOn: ["MakeDistribution", "publishToMavenLocal"])
-
-task cleanAll(group: "Build", dependsOn: [":intermediate:cleanGenerated", "clean"])
 
 assemble.dependsOn("GenerateDIS")
 
+clean.dependsOn([":intermediate:clean", ":generator:clean"])
 
-//
-//
-//MakeDistribution.doLast {
-//    println("MakeDistribution Done")
-//}
-
+task cleanAll(group: "Build", dependsOn: [":intermediate:cleanGenerated", "clean"])
