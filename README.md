@@ -9,12 +9,49 @@ anything other than Java SDK 14.
 
 On the command line, just type
 
-`./gradlew build`
+`./gradlew publishToMavenLocal`
 
 Or, use an IDE.
 
 All major IDE's support gradle, usually by way of a plugin.
 Just pick your favorite IDE, install the gradle plugin, and import the main `build.gradle` file.
+
+This will populate your local maven repository,
+
+`~/.m2/repository`
+
+With the publishable artifacts
+
+```
+open-dis7-enumerations-1.0-javadoc.jar
+open-dis7-enumerations-1.0-sources.jar
+open-dis7-enumerations-1.0.jar
+open-dis7-enumerations-1.0.module
+open-dis7-enumerations-1.0.pom
+```
+
+You can then depend on them in other projects that are configured
+to use the local maven repository as a dependency repository.
+
+It will also place
+
+```
+open-dis7-enumerations-1.0-javadoc.jar
+open-dis7-enumerations-1.0-sources.jar
+open-dis7-enumerations-1.0.jar
+```
+
+in `build/libs` if you would rather copy jar files around.
+
+If you don't want the maven dependency stuff at all, you can just use
+
+`./gradlew build`
+
+
+> NOTE: It is if you use the `build` task, you should then also
+> use `cleanAll` before invoking `publishToMavenLocal` to avoid
+> especially long build times that will arise from compiling the entire
+> generated sources twice.
 
 The `.gitignore` file now ignores the recommended files for most popular IDEs (Netbeans, Jetbrains, Eclipse, VS Code),
 as well as recommended operating system ignores (Windows, Mac, Linux).

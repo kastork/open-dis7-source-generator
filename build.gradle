@@ -3,15 +3,16 @@ plugins {
     id "maven-publish"
 }
 
+group = "edu.nps.moves"
+version = "1.0"
+archivesBaseName = "open-dis7-enumerations"
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
 }
-
-//dependencies {
-//    project(":generator")
-//    project(":intermediate")
-//}
 
 sourceSets {
     main {
@@ -29,8 +30,8 @@ task GenerateEnums(type: JavaExec, group: "codegen", dependsOn: [':generator:ass
     doLast {
         println("GenerateEnums Done")
     }
-    classpath "${project(":generator").buildDir}/classes/java/main/" +     \
-                  ":${project(":generator").buildDir}/resources/main/"
+    classpath "${project(":generator").buildDir}/classes/java/main/" +           \
+                        ":${project(":generator").buildDir}/resources/main/"
     main "edu.nps.moves.dis7.source.generator.enumerations.GenerateEnumerations"
     args([
             "generator/xml/SISO/SISO-REF-010.xml",
@@ -43,8 +44,8 @@ task GeneratePdus(type: JavaExec, group: "codegen", dependsOn: "GenerateEnums") 
     doLast {
         println("GeneratePdus Done")
     }
-    classpath "${project(":generator").buildDir}/classes/java/main/" +     \
-                  ":${project(":generator").buildDir}/resources/main/"
+    classpath "${project(":generator").buildDir}/classes/java/main/" +           \
+                        ":${project(":generator").buildDir}/resources/main/"
     jvmArgs = ([
             "-Dxmlpg.generatedSourceDir=intermediate/src/main/java",
             "-Dxmlpg.package=edu.nps.moves.dis7"
@@ -57,8 +58,8 @@ task GenerateJammers(type: JavaExec, group: "codegen", dependsOn: "GeneratePdus"
     doLast {
         println("GenerateJammers Done")
     }
-    classpath "${project(":generator").buildDir}/classes/java/main/" +     \
-                  ":${project(":generator").buildDir}/resources/main/"
+    classpath "${project(":generator").buildDir}/classes/java/main/" +           \
+                        ":${project(":generator").buildDir}/resources/main/"
     main "edu.nps.moves.dis7.source.generator.entitytypes.GenerateJammers"
     args([
             "generator/xml/SISO/SISO-REF-010.xml",
@@ -71,8 +72,8 @@ task GenerateObjectTypes(type: JavaExec, group: "codegen", dependsOn: "GenerateJ
     doLast {
         println("GenerateObjectTypes Done")
     }
-    classpath "${project(":generator").buildDir}/classes/java/main/" +     \
-                  ":${project(":generator").buildDir}/resources/main/"
+    classpath "${project(":generator").buildDir}/classes/java/main/" +           \
+                        ":${project(":generator").buildDir}/resources/main/"
     main "edu.nps.moves.dis7.source.generator.entitytypes.GenerateObjectTypes"
     args([
             "generator/xml/SISO/SISO-REF-010.xml",
@@ -81,13 +82,13 @@ task GenerateObjectTypes(type: JavaExec, group: "codegen", dependsOn: "GenerateJ
     ])
 }
 
-task GenerateEntityTypes(type: JavaExec, group: "codegen", dependsOn: ["GenerateObjectTypes",":intermediate:classes"]) {
+task GenerateEntityTypes(type: JavaExec, group: "codegen", dependsOn: ["GenerateObjectTypes", ":intermediate:classes"]) {
     doLast {
         println("GenerateEntityTypes Done")
     }
-    classpath "${project(":generator").buildDir}/classes/java/main/" +     \
-                  ":${project(":generator").buildDir}/resources/main/" +     \
-                  ":${project(":intermediate").buildDir}/classes/java/main"
+    classpath "${project(":generator").buildDir}/classes/java/main/" +           \
+                        ":${project(":generator").buildDir}/resources/main/" +           \
+                        ":${project(":intermediate").buildDir}/classes/java/main"
     main "edu.nps.moves.dis7.source.generator.entitytypes.GenerateEntityTypes"
     args([
             "generator/xml/SISO/SISO-REF-010.xml",
@@ -104,3 +105,20 @@ assemble.dependsOn("GenerateDIS")
 clean.dependsOn([":intermediate:clean", ":generator:clean"])
 
 task cleanAll(group: "Build", dependsOn: [":intermediate:cleanGenerated", "clean"])
+
+
+jar {
+    zip64(true)
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifactId = 'open-dis7-enumerations'
+        }
+
+    }
+}
+
+publishToMavenLocal.dependsOn(build)

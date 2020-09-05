@@ -21,24 +21,8 @@ sourceSets {
 }
 
 
-jar {
-    zip64(true)
-    archiveBaseName = "open-dis7-enumerations"
-}
 
 task cleanGenerated(type: Delete) {
     delete "src/main/java/edu"
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'edu.nps.moves'
-            artifactId = 'open-dis7-enumerations'
-            version = '1.0'
-
-            from components.java
-        }
-    }
 }
 
