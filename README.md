@@ -6,17 +6,15 @@ This is a project to generate a type-safe java implementation of the DIS Protoco
 
 **PROGRESS.** All build tasks can now be performed without installing
 anything other than Java SDK 14.
-No Netbeans, no Ant, no Maven, no Gradle, no jars from who-knows where.
 
-`./gradlew MakeDistribution`
+On the command line, just type
 
-This should open the door to creating a CI/CD pipeline with Github actions or something.
+`./gradlew build`
+
+Or, use an IDE.
 
 All major IDE's support gradle, usually by way of a plugin.
 Just pick your favorite IDE, install the gradle plugin, and import the main `build.gradle` file.
-Friends let friend choose their own IDE.
-
-Since we're using a build tool instead of an IDE project, we can employ dependency management, so the apache commons io dependency is now handled with dependency management instead of keeping the jar in git.
 
 The `.gitignore` file now ignores the recommended files for most popular IDEs (Netbeans, Jetbrains, Eclipse, VS Code),
 as well as recommended operating system ignores (Windows, Mac, Linux).
@@ -54,9 +52,9 @@ The project is hosted on **github.com** and the support files which are used to 
 
 On a command line in the root of this project, type.
 
-`./gradlew MakeDistribution`
+`./gradlew build`
 
-Or, in your favorite IDE, VS Code, emacs or Vim create a gradle run configuration invokes the `MakeDistribution` task.
+Or, in your favorite IDE, VS Code, emacs or Vim create a gradle run configuration invokes the `build` task.
 
 > Note: If you find that the build is running out of memory,
 > you can adjust it in the file, `gradle.properties`.
@@ -71,13 +69,13 @@ The generator program still needs Java 14, so while we are making a java 8 compa
 The build currently creates a single jar that has everything.
 There's a bit more build mechanics to do in order to make slimmed down jars as the previous version of this project did.
 
-The built jars will be found in `dis/build/libs`
+The built jars will be found in `build/libs` relative to the root of the project.
 
 Some care has to be taken to ensure that any changes in that tree are accounted for
 by the source generator beforehand, so that code changes and improvements aren't lost.
 
-1. The generated source         resides in the `src-generated` directory.
-2. The generated entity jars    reside  in the `dist` directory.
+1. The generated source         resides in the `intermediate/src/main` directory.
+2. The generated entity jars    reside  in the `build/libs` directory.
 3. The generated entity javadoc resides in the `dist` directory.
 
 The previous build anticipated being a part of the `open-dis7-java` project.
